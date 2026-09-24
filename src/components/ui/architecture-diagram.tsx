@@ -1,79 +1,80 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Server, Database, Zap, Shield, Layers, ArrowRight } from "lucide-react";
+import { ArrowRight, Database, Layers, Server, Shield, Zap } from 'lucide-react';
+import { useState } from 'react';
 
 export function ArchitectureDiagram() {
-  const [selectedNode, setSelectedNode] = useState<string>("redis");
+  const [selectedNode, setSelectedNode] = useState<string>('redis');
 
   const nodes = [
     {
-      id: "client",
-      title: "Client Layer",
-      subtitle: "Web, Mobile & 3rd Party APIs",
+      id: 'client',
+      title: 'Client & Edge Tier',
+      subtitle: 'Web, Mobile & Webhooks',
       icon: Layers,
-      color: "#00f2fe",
-      description: "Incoming HTTPS requests, webhooks from ShipStation and marketing platforms with JWT Bearer authentication.",
-      metrics: "15k - 20k Requests/sec",
+      description:
+        'Incoming HTTPS requests, marketing webhooks (ShipStation, payment gateways) authenticated with JWT bearer tokens.',
+      metrics: '15,000+ Requests/sec',
     },
     {
-      id: "gateway",
-      title: "API Gateway & RBAC",
-      subtitle: "Rate Limiting & Auth Validation",
+      id: 'gateway',
+      title: 'API Gateway & RBAC',
+      subtitle: 'Rate Limiting & Auth Guard',
       icon: Shield,
-      color: "#ff2c2c",
-      description: "Role-based access control (RBAC), token validation, distributed rate-limiting via Redis token-bucket algorithm.",
-      metrics: "Sub-2ms Token Verification",
+      description:
+        'Granular multi-tenant Role-Based Access Control, token verification, and sliding-window rate limiting via Redis token bucket.',
+      metrics: '< 2ms Auth Validation',
     },
     {
-      id: "services",
-      title: "Microservices Core",
-      subtitle: "PHP Laravel & Node.js / Express",
+      id: 'services',
+      title: 'Microservices Core',
+      subtitle: 'PHP Laravel 11 & Node.js',
       icon: Server,
-      color: "#10b981",
-      description: "Stateless backend services handling reservation workflows, lead generation pipelines, RFQ automation, and AI content analysis.",
-      metrics: "Auto-scaled Pods • 99.99% SLA",
+      description:
+        'Stateless backend services executing AI prompt synthesis, dynamic print calculation, order pipelines, and ERP workflows.',
+      metrics: 'Auto-scaled Containers • 99.9% SLA',
     },
     {
-      id: "redis",
-      title: "Redis Cache Layer",
-      subtitle: "In-Memory Sub-Millisecond Store",
+      id: 'redis',
+      title: 'In-Memory Caching',
+      subtitle: 'Redis 7 Cluster',
       icon: Zap,
-      color: "#f59e0b",
-      description: "High-read endpoints cached with aggressive TTLs, distributed mutex locks, and session serialization.",
-      metrics: "1.1ms Latency • 99.4% Hit Rate",
+      description:
+        'Sub-millisecond cache-aside layer for real-time listing queries, distributed Redlock mutexes, and user session storage.',
+      metrics: '0.3ms - 1.1ms • 99.4% Hit Rate',
     },
     {
-      id: "polyglot",
-      title: "Polyglot Database Tier",
-      subtitle: "PostgreSQL 16 & MongoDB Atlas",
+      id: 'polyglot',
+      title: 'Persistence Tier',
+      subtitle: 'MySQL 8 & PostgreSQL',
       icon: Database,
-      color: "#a855f7",
-      description: "PostgreSQL for ACID compliance, user auth, and financial ledger data. MongoDB for flexible listing schemas and audit logs.",
-      metrics: "Zero Data Inconsistency",
+      description:
+        'Strict ACID relational schemas with composite B+Tree indexing, multi-tenant tenant_id isolation, and zero-drift balance commits.',
+      metrics: '100% ACID Concurrency Safety',
     },
   ];
 
   const activeNodeData = nodes.find((n) => n.id === selectedNode) || nodes[3];
 
   return (
-    <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-b from-[#0e111a] via-[#090b10] to-[#06070a] p-4 sm:p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-5 sm:p-6 shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
         <div>
-          <span className="text-[11px] sm:text-xs font-mono text-[#00f2fe] bg-[#00f2fe]/10 px-3 py-1 rounded-full border border-[#00f2fe]/20 uppercase tracking-wider">
-            High-Level Architecture (HLD)
+          <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider">
+            System Design & HLD
           </span>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase text-white mt-2">
-            Distributed Polyglot Pipeline
+          <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">
+            Distributed Production Pipeline
           </h3>
         </div>
-        <p className="text-xs text-white/50 max-w-sm">
-          Click any component below to inspect the architectural decisions and latency performance.
+        <p className="text-xs text-zinc-400 max-w-sm">
+          Click any component below to inspect the architectural responsibilities and measured
+          performance metrics.
         </p>
       </div>
 
-      {/* Interactive Node Flow Diagram */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3 relative">
+      {/* Node Flow Diagram */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
         {nodes.map((node, i) => {
           const isSelected = node.id === selectedNode;
           const Icon = node.icon;
@@ -81,50 +82,55 @@ export function ArchitectureDiagram() {
             <button
               key={node.id}
               onClick={() => setSelectedNode(node.id)}
-              className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all relative group flex flex-col justify-between min-h-[120px] sm:min-h-[140px] active:scale-98 ${
+              className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between min-h-[130px] ${
                 isSelected
-                  ? "bg-white/[0.08] border-white/40 shadow-[0_0_25px_rgba(255,255,255,0.15)] sm:scale-[1.02]"
-                  : "bg-white/[0.02] border-white/10 hover:bg-white/[0.05] hover:border-white/20"
+                  ? 'bg-zinc-800 border-zinc-500 shadow-sm'
+                  : 'bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-zinc-700'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: `${node.color}20`, color: node.color }}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      isSelected ? 'bg-zinc-700 text-white' : 'bg-zinc-800 text-zinc-400'
+                    }`}
                   >
                     <Icon className="w-4 h-4" />
                   </div>
-                  <span className="text-[10px] font-mono text-white/40">0{i + 1}</span>
+                  <span className="text-[11px] font-mono text-zinc-500">0{i + 1}</span>
                 </div>
-                <h4 className="text-xs font-bold text-white leading-tight mb-1">{node.title}</h4>
-                <p className="text-[10px] text-white/40 leading-snug">{node.subtitle}</p>
+                <h4 className="text-xs font-semibold text-white leading-tight mb-0.5">
+                  {node.title}
+                </h4>
+                <p className="text-[10px] text-zinc-400 leading-snug">{node.subtitle}</p>
               </div>
 
-              <div className="mt-3 pt-2 border-t border-white/5 flex items-center gap-1 text-[10px] font-mono" style={{ color: node.color }}>
+              <div className="mt-3 pt-2 border-t border-zinc-800 flex items-center gap-1 text-[10px] font-mono text-zinc-400">
                 <span>Inspect</span>
-                <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-2.5 h-2.5" />
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* Detailed Architectural Breakdown Panel */}
-      <div className="mt-6 rounded-2xl bg-black/60 border border-white/10 p-5 font-mono text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      {/* Active Node Detail Callout */}
+      <div className="mt-5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 p-4 font-mono text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeNodeData.color }} />
-            <span className="text-white font-bold text-sm">{activeNodeData.title}</span>
-            <span className="text-white/40">|</span>
-            <span className="text-white/60">{activeNodeData.subtitle}</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="text-white font-semibold">{activeNodeData.title}</span>
+            <span className="text-zinc-600">|</span>
+            <span className="text-zinc-400">{activeNodeData.subtitle}</span>
           </div>
-          <p className="text-white/70 text-xs font-sans leading-relaxed">{activeNodeData.description}</p>
+          <p className="text-zinc-400 text-xs font-sans leading-relaxed">
+            {activeNodeData.description}
+          </p>
         </div>
 
-        <div className="shrink-0 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-right">
-          <div className="text-[10px] text-white/40 uppercase tracking-widest">Measured Benchmark</div>
-          <div className="text-sm font-bold" style={{ color: activeNodeData.color }}>
+        <div className="shrink-0 px-3.5 py-1.5 rounded-lg bg-zinc-800/80 border border-zinc-700 text-right">
+          <div className="text-[9px] text-zinc-400 uppercase tracking-wider">Measured Output</div>
+          <div className="text-xs font-bold text-white mt-0.5 font-mono">
             {activeNodeData.metrics}
           </div>
         </div>
@@ -132,3 +138,5 @@ export function ArchitectureDiagram() {
     </div>
   );
 }
+
+export default ArchitectureDiagram;
